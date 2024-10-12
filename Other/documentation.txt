@@ -1,0 +1,139 @@
+This is a documentation for minesweeper in PYGame by Reese.
+The documentation does not give a whole run down but attempts to cover most parts of the program
+----------------------------------------------------------------------------------------------------
+Program broken down into sections as branches - 
+Program ¬--> Main Program ¬--> Main
+        |                 └--> 'Everything Else' --> (Colour, Font, Image, Field, Display, Extra)
+        |
+        ¬--> Field Generation ¬--> Array Creation
+        |                     └--> Array Assignment
+        |
+        ¬--> Font Creation
+        |
+        |
+        ¬--> Player Actions ¬--> Place Flag
+        |                   └--> Dig Ground
+        |                   └--> Remove Flag
+        ¬--> Num Tile Display
+        |
+        |
+        ¬--> Win Checker
+        |                
+        |
+        └--> Game Over
+----------------------------------------------------------------------------------------------------
+Main Program : 
+. The 'Main Program' is broken into 2 sections; the 'Main' and 'Everything Else' :
+  . 'Main' is where the game runs and loops until the game ends or is cancelled, this part continuo-
+    usly checks for player input and quits the game or runs a subroutine from 'Player Actions'
+  . 'Everything Else' contains multiple subsections, they initialise multiple objects which is used
+    throughout the game.
+. The display section has a subsection(Used to display grid onto screen), it draws a set of
+  horizontal and vertical lines and then a square border to cover imperfections, the border also
+  allows it to have a perfect curve at the edges.
+
+Field Generation : 
+. The 'Field Generation' is broken into 2 sections; the 'Array Creation' and 'Array Assignment' : 
+  . 'Array Creation' creates 4 2D arrays :
+    . mine_placement --- Represents game grid storing where B and C are placed
+    . display_field --- Stores what is displayed to the player
+    . grid_cords_x/grid_cords_y --- A list of an axis lists of 2 values, a range of the opposing axis
+  . 'Array Assignment' Assigns the b/c tiles and grid pos : 
+    . mine_placement --- Randomly assignns b/c tiles in randon locations
+    . display_field --- The random clear tiles is assigned to this array
+    . grid_cords_x/grid_cords_y --- Based on the locations on the grid drawn onto the surface, Themes
+      coordinates are used in a for loop to generate the grid locations
+. mine_placement states - "" == Safe, "B" == Bomb,"C" == Clear
+. display_field states - "" == Empty, "D" == Dug,"C" == Clear, "F" == Flag
+. The assignement of the 'grid_cords_x/grid_cords_y' only works on the current display res
+. I don't know how the grid_cords even worked...it was a pain matching the cords
+
+Font Creation : 
+. The 'Font Creation' is broken into 3 sections, a list and tuple is passed into the subroutine.
+  . Section 1(Font Creation) - This section creates the font, based on items from the list
+  . Section 2(Rect Creation) - This section creates a rectangle for the font to be displayd based on
+    items from the tuple
+  . Section 3(Font Display) - With the font and the rect, it combines them and outputs it onto the
+    screen, then updates it
+. This class does not save the font data, it only creates it and outputs it onto the screen. As a
+  result, the font cannot be changed; this will limit the way you can create fonts
+. Font List = [], Rect Tuple = (X-Coordinate Centre, Y-Coordinate Centre)
+
+Player Action : 
+. The Player Action section is a group of procedures which are called based on mouse inputs from the
+  player, there are 3 procedures in this section in total : 
+  . Section 1('place_flag') - Checks mouse is in an imageless tile, then places a flag image
+  . Section 2('dig_ground') - Checks mouse is in an imageless tile, then checks for bomb. If it is a
+    bomb then it will place an apporpriate image and run 'game_over' procedure with False passed, 
+    otherwise it will run "num_display" to place a number tile
+  . Section 3('remove_flag') - Checks mouse is in a tile with flag image, then draws green rect over
+. Section 2 is assigned to mouse wheel to prevent accidental presses
+
+Num Display : 
+. The Num Tile Display consists of 3 sections, it shows the number of bombs around a dug tile, is
+  ran from "dig_ground"
+  . Section 1(Temp variable creation) - Creates variables temporarily storing data
+  . Section 2(Bomb Count) - Using a for loop in a try/except block it counts the amount of bomb are
+    are in the surrounding tiles
+  . Section 3(Display) - With the total of bombs in the surrounding tiles, it displays the num tile
+    using a colossal sized if statement
+
+End Checker :
+. The Win procedure consists of sections, it is called after digging or placing a flag to check
+  whether the player has completed the requirements to win the game
+  . Section 1(Temp variable creation) - Creates variables temporarily storing data
+  . Section 2(Gird checker) - Loops through the display_field and checks the tile is the same as
+    its position in mine_placement, then totals it
+  . Section 3(End game or not) - Checks if all the requirements are met to end the game
+
+Game Over : 
+. The 'Game Over' prcedure has a 'type' passed into it and is broken into 3 sections :
+  . Section 1(Event Prevention) - Clears and blocks events to prevent other actions from performing
+  . Section 2(Game Over Selection) - Selection which tells the winner whether they won or lost
+  . Section 3(Self Destruct) - Performs a countdown and quits the game, not cloesd from main as it
+    is easier to close from here
+. The contdown was planned to start from 10 but due to the 'font_creation' class' limits, 10 digits
+  will leave visible parts of the original textbox when the digits decrement.
+----------------------------------------------------------------------------------------------------
+Others : 
+. This document's max line length is 100 char
+. The tiles are either 'b', 'c', 'f', '', "d"; bomb/clear/flag/unassigned/dug
+. The images were created on https://www.pixilart.com/draw
+. The girds are 32x32 seperated by lines of 8x
+. Dhurjati is a font, the font file was removed from the original folder; this is becuase of the
+  way PYGame finds files, the original folder is left untouched. This font does not belong to Reese
+. The grid was originally 8x8 but due to miscalculation it is now 9x9
+. Pos of each tile in the grid originally used a 3D array which would have to compare mouse pos with
+  every tile, it is replaced with 2 2D arrays to narrow down the tile. This is done by comparing the
+  mouse x-pos in the x-axis array, if it is in a range then it narrows the tiles to 
+  search along the y-axis. It then repeat this to find the tile. This is the amount
+  of comparisons each method uses; 3D-array(4*(x*y)), 2D-arrays((2*x)+(2*y)), DISCLAIMER - 
+  THE TOTAL COMPARISONS IS NOT TESTED SO THIS MAY BE WRONG.
+. The 'bg.pixil' file is to be used with https://www.pixilart.com/draw, it is the background of the
+  number tiles
+. Current sizes : 32px outer, repeats 9x (9px line, 32px tile), 9px line, 32px outer
+. The score was replaced with a win checkign subroutine, this was becuase the score would be counted
+  multiple times due to the way mouse inputs were taken, when a player pressed a mouse button it may
+  be registered multiple times which causes the score to be changed multiple times, even when the
+  program checks display_field to prevent extra score changes
+. grid_image became redundant as display_field showed what was displayed on the field already
+  
+
+Potential additions : 
+. Menu Screen
+. Save score - Tracks time played if win
+. Customize screen size
+. Customize game grid size
+. Flag/Bombs left counter board - Makit it optional?
+. Create stopwatch board
+. Custom difficulties/game modes
+. Easter eggs???
+. Themes
+. Animations
+. Smart tiling - user selects an area which becomes clear tile, others are not revealed so when the
+  user hits a clear tile which is not revealed then it reveales all connected clear tiles and num
+  tiles around it
+. Smart randomness - change bombs proximity to each other and allows clear tiles to clump together
+. Sound
+Probably won't do this but nice to dream
+我很快乐
